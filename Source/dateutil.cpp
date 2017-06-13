@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "dateutil.h"
-<<<<<<< HEAD
 #include "coresettings.h"
-=======
->>>>>>> origin/master
 
 string getMonth(int month)
 {
@@ -87,7 +84,6 @@ int dayOfWeek(int year, int month, int day)
 	static int t[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
 	year -= month < 3;
 	return (year + year / 4 - year / 100 + year / 400 + t[month - 1] + day) % 7;	
-<<<<<<< HEAD
 }
 
 int findDaysBetweenWithDifferentYears(int i)
@@ -107,6 +103,4 @@ int findDaysBetweenWithSameYears(int i)
 	int A_Days = monthToDays(copyfindTable[i].monthOfLeftPage, isLeapYear(copyfindTable[i].yearOfLeftPage)) + copyfindTable[i].dayOfLeftPage; //calculate days in target year so far
 	int B_Days = monthToDays(copyfindTable[i].monthOfRightPage, isLeapYear(copyfindTable[i].yearOfRightPage)) + copyfindTable[i].dayOfRightPage; //calculate days in source year so far
 	return (A_Days - B_Days);
-=======
->>>>>>> origin/master
 }

@@ -24,7 +24,6 @@
     <ClCompile Include="console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="writer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -34,8 +33,6 @@
     <ClCompile Include="inputter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-=======
->>>>>>> origin/master
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -50,14 +47,11 @@
     <ClInclude Include="processes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="coresettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inputter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-=======
->>>>>>> origin/master
   </ItemGroup>
 </Project>

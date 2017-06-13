@@ -17,8 +17,8 @@ struct copyfindEntry {
 	int copyfindRighthandMatch; // pull from copyfind file
 	int copyfindAverageMatch; // process in makeCFTable
 	int copyfindMaximumWordCount; // process in processMaximumValues
-	double fullPageWordCountOfLeftPage; // pull from BLTable
-	string issueNameofLeftPage; // pull from BLTable
+	double fullPageWordCountOfLeftPage; // pull from wordCountTable
+	string issueNameofLeftPage; // pull from wordCountTable
 	int copyfindCombinedAverageWordCountForLeftIssue; // process in processMaximumValues
 	double copyfindFullWordCountOfLeftIssue; // pull from BL table
 	string copyfindPathOfLeftFile; // pull from copyfind file
@@ -74,7 +74,7 @@ struct uniquePageEntry //final manifest; contains each target only once
 	bool bHasDescendents;   // pull from copyfind table
 	bool bHasNoDescendents;   // pull from copyfind table
 	double maximumAverageWordCountForReprintsOnLaterPage; // (reprints) maximum average word count of target page; pull from cftable
-	double fullWordCountofLaterPage; // (whole) full-page word count of target page; pull from cftable via bltable
+	double fullWordCountofLaterPage; // (whole) full-page word count of target page; pull from cftable via wordCountTable
 	string nameOfIssue; // issue of target article; pull from cftable
 	double combinedAverageWordCountForIssue; // (reprints) maximum average word count of target issue; pull from cftable
 	double fullWordCountOfIssue; // (whole) full-issue word count of targe page; pull from cftable 

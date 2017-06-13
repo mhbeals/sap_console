@@ -119,9 +119,9 @@ void makeCopyFindTable(string inputFileStructureLocation, string stringOfCurrent
 void makeWordCountTable(string inputFileStructureLocation, string stringOfCurrentYear, string stringOfCurrentMonth, string stringOfSubsequentYear, string stringOfSubsequentMonth, string stringOfPreviousYear, string stringOfPreviousMonth)
 {
 	wordCountTableEntry empty;
-	ifstream dataOfPreviousMonth(inputFileStructureLocation + "\\inputs\\bltables\\" + stringOfPreviousYear + "_" + stringOfPreviousMonth + ".tsv");
-	ifstream dataOfCurrentMonth(inputFileStructureLocation + "\\inputs\\bltables\\" + stringOfCurrentYear + "_" + stringOfCurrentMonth + ".tsv");
-	ifstream Data2(inputFileStructureLocation + "\\inputs\\bltables\\" + stringOfSubsequentYear + "_" + stringOfSubsequentMonth + ".tsv");
+	ifstream dataOfPreviousMonth(inputFileStructureLocation + "\\inputs\\wctables\\" + stringOfPreviousYear + "_" + stringOfPreviousMonth + ".tsv");
+	ifstream dataOfCurrentMonth(inputFileStructureLocation + "\\inputs\\wctables\\" + stringOfCurrentYear + "_" + stringOfCurrentMonth + ".tsv");
+	ifstream Data2(inputFileStructureLocation + "\\inputs\\wctables\\" + stringOfSubsequentYear + "_" + stringOfSubsequentMonth + ".tsv");
 	string inputNameOfPage;
 	double inputWordCountOfPage;
 	string inputNameOfIssue;

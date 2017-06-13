@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dateutil.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="inputsorter.cpp" />
     <ClCompile Include="inputter.cpp" />
     <ClCompile Include="processes.cpp" />
@@ -153,6 +154,13 @@
     <ClInclude Include="coresettings.h" />
     <ClInclude Include="dateutil.h" />
     <ClInclude Include="inputter.h" />
+=======
+    <ClCompile Include="processes.cpp" />
+    <ClCompile Include="console.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dateutil.h" />
+>>>>>>> origin/master
     <ClInclude Include="processes.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

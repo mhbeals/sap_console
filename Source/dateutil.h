@@ -8,7 +8,10 @@ bool isLeapYear(int year);
 int monthToDays(int month, bool isLeapYear);
 
 int dayOfWeek(int year, int month, int day);
+<<<<<<< HEAD
 
 int findDaysBetweenWithSameYears(int i);
 
 int findDaysBetweenWithDifferentYears(int i);
+=======
+>>>>>>> origin/master

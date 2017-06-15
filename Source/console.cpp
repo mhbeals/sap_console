@@ -1,5 +1,5 @@
 // Scissors and Paste Console
-// M. H. Beals (2017) v.0.2.2 [Software]
+// M. H. Beals (2017) v.0.2.4 [Software]
 
 // MIT License
 // Copyright(c) 2017 M. H. Beals
@@ -19,6 +19,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// Change Log
+// v.0.2.4 Update title input / normalised title output settings to be more consistent
+
 #include "stdafx.h"
 #include "dateutil.h"
 #include "processes.h"
@@ -26,7 +29,7 @@
 #include "coresettings.h"
 
 // Common Variables
-string inputFileStructureLocation = "E:\\Documents\\Notebooks\\Reprinting\\NewSAPConsole";
+string inputFileStructureLocation = "E:\\sap_reprints";
 string stringOfPreviousYear = "";
 string stringOfYear = "";
 string stringOfSubsequentYear = "";
@@ -35,7 +38,7 @@ string stringOfMonth = "";
 string stringOfSubsequentMonth = "";
 
 int inputStartYear = 1800;
-int inputEndYear = 1800;
+int inputEndYear = 1900;
 int assumedStartMonth = 1;
 int processingSwitch = 0;
 string promptContainer = "";

@@ -1,0 +1,7 @@
+*.pdb
+*.ipdb
+*.iobj
+Source/.vs/sap_console/v14/.suo
+*.tlog
+*.obj
+*.log

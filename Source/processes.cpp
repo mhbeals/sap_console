@@ -79,14 +79,23 @@ void processDirectLinkComparisons() //creates a list of ancestor-descendent (dir
 		int day = 0; //set day to null
 		for (int j = 0; j < size(comparisonsTable); ++j) //go through the comparisons list
 		{
-			if (comparisonsTable[j].laterPage.nameOfPage == UID) //if a target article in that line of the comparisons matches current unique article id
+			if (comparisonsTable[j].laterPage.normalisedNameOfPage == UID) //if a target article in that line of the comparisons matches current unique article id
 			{
 				if (comparisonsTable[j].perfectMatchOfComparison > Score) //check to see if better perfect match has already been found; if not, proceed
 				{
-					if (comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage && comparisonsTable[j].earlierPage.monthOfPage == comparisonsTable[j].laterPage.monthOfPage && comparisonsTable[j].earlierPage.dayOfPage == comparisonsTable[j].laterPage.dayOfPage)
+					if (comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage 
+						&& comparisonsTable[j].earlierPage.monthOfPage == comparisonsTable[j].laterPage.monthOfPage 
+						&& comparisonsTable[j].earlierPage.dayOfPage == comparisonsTable[j].laterPage.dayOfPage)
 					{
 					}
-					else if (comparisonsTable[j].earlierPage.yearOfPage > comparisonsTable[j].laterPage.yearOfPage || comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage && comparisonsTable[j].earlierPage.monthOfPage > comparisonsTable[j].laterPage.monthOfPage || comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage && comparisonsTable[j].earlierPage.monthOfPage == comparisonsTable[j].laterPage.monthOfPage && comparisonsTable[j].earlierPage.dayOfPage > comparisonsTable[j].laterPage.dayOfPage) //if source article is later than the target article
+					else if (comparisonsTable[j].earlierPage.yearOfPage > comparisonsTable[j].laterPage.yearOfPage 
+						|| 
+						comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage 
+						&& comparisonsTable[j].earlierPage.monthOfPage > comparisonsTable[j].laterPage.monthOfPage 
+						|| 
+						comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage 
+						&& comparisonsTable[j].earlierPage.monthOfPage == comparisonsTable[j].laterPage.monthOfPage 
+						&& comparisonsTable[j].earlierPage.dayOfPage > comparisonsTable[j].laterPage.dayOfPage) //if source article is later than the target article
 					{
 						BestMatch = comparisonsTable[j].earlierPage.normalisedNameOfPage; //unique id of source
 						Score = comparisonsTable[j].perfectMatchOfComparison; //set score as current best score
@@ -109,7 +118,14 @@ void processDirectLinkComparisons() //creates a list of ancestor-descendent (dir
 				{
 					if (bIsEarliest) //if bIsEarliest is set to true; shouldn't be
 					{
-						if (comparisonsTable[j].earlierPage.yearOfPage > year || comparisonsTable[j].earlierPage.yearOfPage == year && comparisonsTable[j].earlierPage.monthOfPage > month || comparisonsTable[j].earlierPage.yearOfPage == year && comparisonsTable[j].earlierPage.monthOfPage == month && comparisonsTable[j].earlierPage.dayOfPage > day) //if current test is earlier than previous best match, replace entries with new data
+						if (comparisonsTable[j].earlierPage.yearOfPage > year 
+							|| 
+							comparisonsTable[j].earlierPage.yearOfPage == year 
+							&& comparisonsTable[j].earlierPage.monthOfPage > month 
+							|| 
+							comparisonsTable[j].earlierPage.yearOfPage == year 
+							&& comparisonsTable[j].earlierPage.monthOfPage == month 
+							&& comparisonsTable[j].earlierPage.dayOfPage > day) //if current test is earlier than previous best match, replace entries with new data
 						{
 							BestMatch = comparisonsTable[j].earlierPage.normalisedNameOfPage; //set as best match for target
 							Score = comparisonsTable[j].perfectMatchOfComparison; //set as new score
@@ -119,7 +135,14 @@ void processDirectLinkComparisons() //creates a list of ancestor-descendent (dir
 							day = comparisonsTable[j].earlierPage.dayOfPage; //set source day as day
 						}
 					}
-					else if (comparisonsTable[j].earlierPage.yearOfPage > comparisonsTable[j].laterPage.yearOfPage || comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage && comparisonsTable[j].earlierPage.monthOfPage > comparisonsTable[j].laterPage.monthOfPage || comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage && comparisonsTable[j].earlierPage.monthOfPage == comparisonsTable[j].laterPage.monthOfPage && comparisonsTable[j].earlierPage.dayOfPage > comparisonsTable[j].laterPage.dayOfPage)//if current test is earlier than previous best match, replace entries with new data
+					else if (comparisonsTable[j].earlierPage.yearOfPage > comparisonsTable[j].laterPage.yearOfPage 
+						|| 
+						comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage 
+						&& comparisonsTable[j].earlierPage.monthOfPage > comparisonsTable[j].laterPage.monthOfPage 
+						|| 
+						comparisonsTable[j].earlierPage.yearOfPage == comparisonsTable[j].laterPage.yearOfPage
+						&& comparisonsTable[j].earlierPage.monthOfPage == comparisonsTable[j].laterPage.monthOfPage
+						&& comparisonsTable[j].earlierPage.dayOfPage > comparisonsTable[j].laterPage.dayOfPage)//if current test is earlier than previous best match, replace entries with new data
 					{
 						BestMatch = comparisonsTable[j].earlierPage.normalisedNameOfPage; //unique id of source
 						Score = comparisonsTable[j].perfectMatchOfComparison; //set score as current best score
@@ -160,7 +183,7 @@ void crossReferenceValuesInWordCountAndCopyfindTables() // combines British Libr
 			if (copyfindTable[i].nameOfLeftPage == wordCountTable[t].wordCountTablePageName) // if the cfuid is the same as the bluid
 			{
 				copyfindTable[i].fullPageWordCountOfLeftPage = wordCountTable[t].wordCountTableWordCountOfPage; // add full wordcount
-				copyfindTable[i].issueNameofLeftPage = wordCountTable[t].wordCountTableIssueName; // add issue name
+				copyfindTable[i].issueNameofLeftPage = copyfindTable[i].nameOfLeftPage.substr(0,11)+copyfindTable[i].titleOfLeftPage;
 				copyfindTable[i].copyfindFullWordCountOfLeftIssue = wordCountTable[t].wordCountTableFullWordCountOfIssue; // add issue wordcount
 				newT = t;
 				t = size(wordCountTable) - 1;
@@ -201,7 +224,7 @@ void assignMaximumAverageWordCountValues() // creates a table of maximum wordcou
 		for (int l = 0; l < copyfindTable.size(); l++)
 		{
 			// go through copyfind table
-			if (uniquePagesTable[k].nameOfLaterPage == copyfindTable[l].nameOfLeftPage)
+			if (uniquePagesTable[k].nameOfLaterPage == copyfindTable[l].normalisedNameOfLeftPage)
 			{
 				uniquePagesTable[k].maximumAverageWordCountForReprintsOnLaterPage = copyfindTable[l].copyfindMaximumWordCount;
 				uniquePagesTable[k].nameOfIssue = copyfindTable[l].issueNameofLeftPage;

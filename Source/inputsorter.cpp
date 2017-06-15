@@ -33,14 +33,14 @@ void transferCopyfindData(int i, size_t j)
 }
 void checkForUniqueLaterPage(int i)
 {
-	string id = copyfindTable[i].nameOfLeftPage;
+	string id = copyfindTable[i].normalisedNameOfLeftPage;
 	auto pred = [id](const uniquePageEntry & item) {return item.nameOfLaterPage == id;};
 	if (find_if(begin(uniquePagesTable), end(uniquePagesTable), pred) != end(uniquePagesTable))
 	{}
 	else
 	{
 		uniquePagesTable.push_back(emptyPage);
-		uniquePagesTable[uniquePagesTable.size() - 1].nameOfLaterPage = copyfindTable[i].nameOfLeftPage;
+		uniquePagesTable[uniquePagesTable.size() - 1].nameOfLaterPage = copyfindTable[i].normalisedNameOfLeftPage;
 	}
 }
 void makeComparisonsTable()

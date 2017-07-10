@@ -6,3 +6,10 @@ Source/.vs/sap_console/v14/.suo
 *.obj
 *.log
 *.ilk
+*.suo
+*.db
+*.opendb
+*.ipch
+/Source/.vs/sap_console/v15/ipch/AutoPCH/SAP_CONSOLE-8dc424a/CONSOLE-9d481a3e
+/Source/.vs/sap_console/v15
+/Source/.vs/sap_console/v15/ipch/AutoPCH/SAP_CONSOLE-8dc424a/CONSOLE-9d481a3e

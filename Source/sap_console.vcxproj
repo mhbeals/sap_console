@@ -160,8 +160,8 @@
     <ClInclude Include="writer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\changelog.md" />
     <None Include="..\README.md" />
-    <None Include="changelog.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

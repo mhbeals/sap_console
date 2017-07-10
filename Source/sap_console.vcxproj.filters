@@ -15,22 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dateutil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="processes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="writer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="inputter.h">
+      <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="inputsorter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="inputter.cpp">
+    <ClCompile Include="dateutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,17 +32,26 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dateutil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="processes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="coresettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inputter.h">
+    <ClInclude Include="runner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="processor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dateUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="changelog.md" />
   </ItemGroup>
 </Project>

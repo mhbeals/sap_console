@@ -1,5 +1,5 @@
 // Scissors and Paste Console
-// M. H. Beals (2017) v.0.2.4 [Software]
+// M. H. Beals (2017) v.0.3.3 [Software]
 
 // MIT License
 // Copyright(c) 2017 M. H. Beals
@@ -19,179 +19,229 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// Change Log
-// v.0.2.4 Update title input / normalised title output settings to be more consistent
-
 #include "stdafx.h"
-#include "dateutil.h"
-#include "processes.h"
-#include "inputter.h"
 #include "coresettings.h"
+#include "runner.h"
 
-// Common Variables
-string inputFileStructureLocation = "E:\\sap_reprints";
-string stringOfPreviousYear = "";
-string stringOfYear = "";
-string stringOfSubsequentYear = "";
-string stringOfPreviousMonth = "";
-string stringOfMonth = "";
-string stringOfSubsequentMonth = "";
-
+// Starting Variables
+std::string inputFileStructureLocation = "g:\\sap_reprints";
 int inputStartYear = 1800;
-int inputEndYear = 1900;
+int inputEndYear = 1801;
 int assumedStartMonth = 1;
-int processingSwitch = 0;
-string promptContainer = "";
+std::string promptContainer = "";
+int eRequest = -1;
 
-string varList(int yearBeingProcessed, int monthBeingProcessed)
+unsigned int NumberOfThreads;
+std::vector<std::thread> t;
+bool bCatchOverflow = false;
+
+// Console functions
+
+
+void recordRunner(runner* thisRunner)
+{
+	Thread.push_back(thisRunner);
+}
+
+void incrementActiveThread()
+{
+	if (activeThread == NumberOfThreads-1)
+	{
+		activeThread = 0;
+	}
+	else
+	{
+		activeThread++;
+	}
+}
+
+void requestDataPacket(int coreID)
+{
+	eRequest = coreID;
+	
+	while (eRequest > -1)
+	{
+		_sleep(1); // Required for Release
+		if (bCatchOverflow)
+		{
+			Thread[coreID]->bRunComplete = true;
+			eRequest = -1;
+			return;
+		}
+	}
+	incrementActiveThread();
+}
+
+void stopThreads()
+{
+	for (unsigned i = 0; i < NumberOfThreads; i++)
+	{
+		Thread[i]->bRunComplete = true;
+	}
+	bCatchOverflow = true;
+}
+
+void waitForThreads()
+{
+	unsigned reg = 0;
+	while (reg != NumberOfThreads)
+	{
+		reg = 0;
+		for (unsigned i = 0; i < NumberOfThreads; i++)
+		{
+			if (Thread[i]->bAnalysisComplete)
+			{
+				reg++;
+			}
+			else
+			{
+			}
+		}
+	}
+}
+
+std::string varList(int yearBeingProcessed, int monthBeingProcessed)
 {
 	if (monthBeingProcessed == 1)
 	{
-		ostringstream listOfMonthsAndYears;
+		std::ostringstream listOfMonthsAndYears;
 		listOfMonthsAndYears << yearBeingProcessed << ",0" << monthBeingProcessed << "," << yearBeingProcessed << ",0" << monthBeingProcessed + 1 << "," << yearBeingProcessed - 1 << ",12";
 		return listOfMonthsAndYears.str();
 	}
 	else if (monthBeingProcessed < 9)
 	{
-		ostringstream listOfMonthsAndYears;
-		listOfMonthsAndYears << yearBeingProcessed << ",0" << monthBeingProcessed << "," << yearBeingProcessed << ",0" << monthBeingProcessed + 1 << "," << yearBeingProcessed << ",0" << monthBeingProcessed-1;
+		std::ostringstream listOfMonthsAndYears;
+		listOfMonthsAndYears << yearBeingProcessed << ",0" << monthBeingProcessed << "," << yearBeingProcessed << ",0" << monthBeingProcessed + 1 << "," << yearBeingProcessed << ",0" << monthBeingProcessed - 1;
 		return listOfMonthsAndYears.str();
 	}
 	else if (monthBeingProcessed == 9)
 	{
-		ostringstream listOfMonthsAndYears;
+		std::ostringstream listOfMonthsAndYears;
 		listOfMonthsAndYears << yearBeingProcessed << ",0" << monthBeingProcessed << "," << yearBeingProcessed << "," << monthBeingProcessed + 1 << "," << yearBeingProcessed << ",08";
 		return listOfMonthsAndYears.str();
 	}
 	else if (monthBeingProcessed == 10)
 	{
-		ostringstream listOfMonthsAndYears;
+		std::ostringstream listOfMonthsAndYears;
 		listOfMonthsAndYears << yearBeingProcessed << "," << monthBeingProcessed << "," << yearBeingProcessed << "," << monthBeingProcessed + 1 << "," << yearBeingProcessed << "," << ",09";
 		return listOfMonthsAndYears.str();
 	}
 	else if (monthBeingProcessed == 11)
 	{
-		ostringstream listOfMonthsAndYears;
+		std::ostringstream listOfMonthsAndYears;
 		listOfMonthsAndYears << yearBeingProcessed << "," << monthBeingProcessed << "," << yearBeingProcessed << "," << monthBeingProcessed + 1 << "," << yearBeingProcessed << "," << monthBeingProcessed - 1;
 		return listOfMonthsAndYears.str();
 	}
 	else
 	{
-		ostringstream listOfMonthsAndYears;
+		std::ostringstream listOfMonthsAndYears;
 		listOfMonthsAndYears << yearBeingProcessed << "," << monthBeingProcessed << "," << yearBeingProcessed + 1 << ",01" << "," << yearBeingProcessed << ",11";
 		return listOfMonthsAndYears.str();
 	}
 }
 
+
 int main()
 {
-	cout << "Welcome to the Scissors and Paste Console." << endl;
-	cout << "Available processes:" << endl;
-	cout << "1. Create List(s) of Memes" << endl;
-	cout << "2. Create List(s) of Directed Links" << endl;
-	cout << "3. Create List(s) of Average Matching Word Count" << endl;
-	cout << "4. Create List(s) of the Percentage of Duplicate Material per Page" << endl; 
-	cout << "5. Create List(s) of the Percentage of Duplicate Material per Issue" << endl;
-	cout << "6. Create List(s) of the Percentage of Duplicate Material per Page per Title" << endl;
-	cout << "7. Create List(s) of the Percentage of Duplicate Material per Issue per Title" << endl;
-	cout << "8. Everything" << endl;
-	cout << "Which processes would you like to undertake?" << endl;
-	cin >> processingSwitch;
-	
-	cout << "Your pre-set variables are:" << endl;
-	cout << "Starting Year: " << inputStartYear << endl;
-	cout << "Ending Year: " << inputEndYear << endl;
-	cout << "File Structure Location: " << inputFileStructureLocation << endl;
-	cout << "Would you like to change the standard variables?" << endl;
-	cin >> promptContainer;
+	//Create runners
+	unsigned int FreeThreads = 1;
+	NumberOfThreads = std::thread::hardware_concurrency();
+
+	// Prompts
+	std::cout << "Welcome to the Scissors and Paste Console." << std::endl << std::endl;
+	if (NumberOfThreads > 1)
+	{
+		std::cout << "There are an estimated " << NumberOfThreads << " threads available for this task." << std::endl;
+		std::cout << "How many threads do you want to leave for other processes?" << std::endl;
+		std::cin >> FreeThreads;
+		std::cout << std::endl << std::endl;
+	}
+
+	unsigned int scratch = NumberOfThreads - FreeThreads-1;
+	NumberOfThreads = scratch;
+
+	// Prompts
+	std::cout << "Your pre-set variables are:" << std::endl;
+	std::cout << "Starting Year: " << inputStartYear << std::endl;
+	std::cout << "Ending Year: " << inputEndYear << std::endl;
+	std::cout << "File Structure Location: " << inputFileStructureLocation << std::endl;
+	std::cout << "Would you like to change the dates?" << std::endl;
+	std::cin >> promptContainer;
 	if (promptContainer == "y")
 	{
-		cout << "Starting Year? ";
-		cin >> inputStartYear;
-		cout << endl << "Ending Year? ";
-		cin >> inputEndYear;
-		cout << endl << "Input Location? ";
-		cin >> inputFileStructureLocation;
-		cout << inputFileStructureLocation << endl;
+		std::cout << "Starting Year? ";
+		std::cin >> inputStartYear;
+		std::cout << std::endl << "Ending Year? ";
+		std::cin >> inputEndYear;
 	}
 	else
 	{
-		cout << "Keeping standard variables..." << endl;
+		std::cout << "Keeping standard dates..." << std::endl;
+	}
+	std::cout << "Would you like to change the file structure location? Remember to use double backslashes" << std::endl;
+	std::cin >> promptContainer;
+	if (promptContainer == "y")
+	{
+		std::cout << "Structure location. Remember to use a double backslash rather than a single one";
+		std::cin >> inputFileStructureLocation;
+		std::cout << std::endl;
+	}
+	else
+	{
+		std::cout << "Keeping standard location..." << std::endl;
 	}
 	
-	for (int i = inputStartYear; i < inputEndYear + 1; i++)
+	// Initialise Runner IDs
+	
+	for (unsigned i = 0; i < NumberOfThreads; ++i)
+	{
+				std::thread th(&runner::runAnalysis, new runner);
+		t.push_back(std::move(th));
+		t[i].detach();
+		while (Thread.size() <= i) {}
+		Thread[i]->coreID = i;
+	}
+
+	for (int i = inputStartYear; i <= inputEndYear; i++)
 	{
 		inputStartYear = i;
 
-		cout << "Processing " << inputStartYear << "...";
-		
 		for (int j = assumedStartMonth; j < 13; j++)
 		{
+			std::cout << "\nProcessing " << getMonth(j) << " " << i;
 			assumedStartMonth = j;
-			cout << getMonth(assumedStartMonth) << "...";
-
-			// Establish Variables
-			string listOfMonthsAndYears = varList(inputStartYear, assumedStartMonth);
-			stringOfYear = listOfMonthsAndYears.substr(0, 4);
-			stringOfMonth = listOfMonthsAndYears.substr(5, 2);
-			stringOfSubsequentYear = listOfMonthsAndYears.substr(8, 4);
-			stringOfSubsequentMonth = listOfMonthsAndYears.substr(13, 2);
-			stringOfPreviousYear = listOfMonthsAndYears.substr(16, 4);
-			stringOfPreviousMonth = listOfMonthsAndYears.substr(21, 2);
+			std::string listOfMonthsAndYears = varList(i, j);
+			std::string stringOfPreviousYear = listOfMonthsAndYears.substr(16, 4);
+			std::string stringOfYear = listOfMonthsAndYears.substr(0, 4);
+			std::string stringOfSubsequentYear = listOfMonthsAndYears.substr(8, 4);
+			std::string stringOfPreviousMonth = listOfMonthsAndYears.substr(21, 2);
+			std::string stringOfMonth = listOfMonthsAndYears.substr(5, 2);
+			std::string stringOfSubsequentMonth = listOfMonthsAndYears.substr(13, 2);
 
 			// Process Data
-			makeCopyFindTable(inputFileStructureLocation, stringOfYear, stringOfMonth, stringOfPreviousYear, stringOfPreviousMonth); // Add new smonth/years to all
-			makeNormalisedTitleTable(inputFileStructureLocation);
-			regexCopyfindTableTitles();
-			makeComparisonsTable();
-
-			switch(processingSwitch)
+			
+			while (eRequest == -1)
 			{
-			case 1:	
-				writeComparisonTable(inputFileStructureLocation, stringOfYear, stringOfMonth);
-			case 2:
-				processDirectLinkComparisons(); 
-				writeDirectedLinksFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-			case 3:
-				makeWordCountTable(inputFileStructureLocation, stringOfYear, stringOfMonth, stringOfSubsequentYear, stringOfSubsequentMonth, stringOfPreviousYear, stringOfPreviousMonth);
-				crossReferenceValuesInWordCountAndCopyfindTables();
-				assignMaximumAverageWordCountValues(); 
-				writeMaxMatchList(inputFileStructureLocation, stringOfYear, stringOfMonth);
-			case 4:
-				makeWordCountTable(inputFileStructureLocation, stringOfYear, stringOfMonth, stringOfSubsequentYear, stringOfSubsequentMonth, stringOfPreviousYear, stringOfPreviousMonth);
-				crossReferenceValuesInWordCountAndCopyfindTables();
-				assignMaximumAverageWordCountValues(); 
-				writePagePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-			case 5:makeWordCountTable(inputFileStructureLocation, stringOfYear, stringOfMonth, stringOfSubsequentYear, stringOfSubsequentMonth, stringOfPreviousYear, stringOfPreviousMonth);
-				crossReferenceValuesInWordCountAndCopyfindTables();
-				assignMaximumAverageWordCountValues(); 
-				writeIssuePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-			case 6:makeWordCountTable(inputFileStructureLocation, stringOfYear, stringOfMonth, stringOfSubsequentYear, stringOfSubsequentMonth, stringOfPreviousYear, stringOfPreviousMonth);
-				crossReferenceValuesInWordCountAndCopyfindTables();
-				assignMaximumAverageWordCountValues(); 
-				writeTitlePagePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-			case 7:makeWordCountTable(inputFileStructureLocation, stringOfYear, stringOfMonth, stringOfSubsequentYear, stringOfSubsequentMonth, stringOfPreviousYear, stringOfPreviousMonth);
-				crossReferenceValuesInWordCountAndCopyfindTables();
-				assignMaximumAverageWordCountValues(); 
-				writeTitleIssuePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-			case 8:processDirectLinkComparisons();
-				makeWordCountTable(inputFileStructureLocation, stringOfYear, stringOfMonth, stringOfSubsequentYear, stringOfSubsequentMonth, stringOfPreviousYear, stringOfPreviousMonth);
-				crossReferenceValuesInWordCountAndCopyfindTables();
-				assignMaximumAverageWordCountValues();
-				writeComparisonTable(inputFileStructureLocation, stringOfYear, stringOfMonth);
-				writeDirectedLinksFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-				writeMaxMatchList(inputFileStructureLocation, stringOfYear, stringOfMonth);
-				writePagePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-				writeIssuePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-				writeTitlePagePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-				writeTitleIssuePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-			};
-
-			clearVectors(); // clear RAM
+				_sleep(1); // Required for Release
+			}
+			
+			Thread[eRequest]->inputFileStructureLocation = inputFileStructureLocation;
+			Thread[eRequest]->stringOfYear =stringOfYear;
+			Thread[eRequest]->stringOfMonth = stringOfMonth;
+			Thread[eRequest]->stringOfPreviousYear = stringOfPreviousYear;
+			Thread[eRequest]->stringOfPreviousMonth = stringOfPreviousMonth;
+			Thread[eRequest]->stringOfSubsequentYear = stringOfSubsequentYear;
+			Thread[eRequest]->stringOfSubsequentMonth = stringOfSubsequentMonth;
+			
+			eRequest = -1;
 		}
 		assumedStartMonth = 1;
-		cout << "finished " << endl;
 	}
-	system("pause"); 
+	stopThreads();
+	waitForThreads();
+	int pause = 0;
+
+	std::cout << std::endl << std::endl << "Enter any key to exit..." << std::endl; // Hold for exit
+	std::cin >> pause;
 	return 0;
 }

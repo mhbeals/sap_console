@@ -1,5 +1,5 @@
 // Scissors and Paste Console
-// M. H. Beals (2017) v.0.3.3 [Software]
+// M. H. Beals (2017) v.0.3.5 [Software]
 
 // MIT License
 // Copyright(c) 2017 M. H. Beals
@@ -26,10 +26,11 @@
 // Starting Variables
 std::string inputFileStructureLocation = "g:\\sap_reprints";
 int inputStartYear = 1800;
-int inputEndYear = 1801;
+int inputEndYear = 1900;
 int assumedStartMonth = 1;
 std::string promptContainer = "";
 int eRequest = -1;
+variableList inputVariables;
 
 unsigned int NumberOfThreads;
 std::vector<std::thread> t;
@@ -100,43 +101,67 @@ void waitForThreads()
 	}
 }
 
-std::string varList(int yearBeingProcessed, int monthBeingProcessed)
+variableList varList(int yearBeingProcessed, int monthBeingProcessed)
 {
 	if (monthBeingProcessed == 1)
 	{
-		std::ostringstream listOfMonthsAndYears;
-		listOfMonthsAndYears << yearBeingProcessed << ",0" << monthBeingProcessed << "," << yearBeingProcessed << ",0" << monthBeingProcessed + 1 << "," << yearBeingProcessed - 1 << ",12";
-		return listOfMonthsAndYears.str();
+		inputVariables.stringOfPreviousYear = std::to_string(yearBeingProcessed - 1);
+		inputVariables.stringOfYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfSubsequentYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfPreviousMonth = "12";
+		inputVariables.stringOfMonth = "01";
+		inputVariables.stringOfSubsequentMonth = "02";
+		return inputVariables;
 	}
 	else if (monthBeingProcessed < 9)
 	{
-		std::ostringstream listOfMonthsAndYears;
-		listOfMonthsAndYears << yearBeingProcessed << ",0" << monthBeingProcessed << "," << yearBeingProcessed << ",0" << monthBeingProcessed + 1 << "," << yearBeingProcessed << ",0" << monthBeingProcessed - 1;
-		return listOfMonthsAndYears.str();
+		inputVariables.stringOfPreviousYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfSubsequentYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfPreviousMonth = "0" + std::to_string(monthBeingProcessed - 1);
+		inputVariables.stringOfMonth = "0" + std::to_string(monthBeingProcessed);
+		inputVariables.stringOfSubsequentMonth = "0" + std::to_string(monthBeingProcessed +1);
+		return inputVariables;
 	}
 	else if (monthBeingProcessed == 9)
 	{
-		std::ostringstream listOfMonthsAndYears;
-		listOfMonthsAndYears << yearBeingProcessed << ",0" << monthBeingProcessed << "," << yearBeingProcessed << "," << monthBeingProcessed + 1 << "," << yearBeingProcessed << ",08";
-		return listOfMonthsAndYears.str();
+		inputVariables.stringOfPreviousYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfSubsequentYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfPreviousMonth = "08";
+		inputVariables.stringOfMonth = "09";
+		inputVariables.stringOfSubsequentMonth = "10";
+		return inputVariables;
 	}
 	else if (monthBeingProcessed == 10)
 	{
-		std::ostringstream listOfMonthsAndYears;
-		listOfMonthsAndYears << yearBeingProcessed << "," << monthBeingProcessed << "," << yearBeingProcessed << "," << monthBeingProcessed + 1 << "," << yearBeingProcessed << "," << ",09";
-		return listOfMonthsAndYears.str();
+		inputVariables.stringOfPreviousYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfSubsequentYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfPreviousMonth = "09";
+		inputVariables.stringOfMonth = "10";
+		inputVariables.stringOfSubsequentMonth = "11";
+		return inputVariables;
 	}
 	else if (monthBeingProcessed == 11)
 	{
-		std::ostringstream listOfMonthsAndYears;
-		listOfMonthsAndYears << yearBeingProcessed << "," << monthBeingProcessed << "," << yearBeingProcessed << "," << monthBeingProcessed + 1 << "," << yearBeingProcessed << "," << monthBeingProcessed - 1;
-		return listOfMonthsAndYears.str();
+		inputVariables.stringOfPreviousYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfSubsequentYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfPreviousMonth = "10";
+		inputVariables.stringOfMonth = "11";
+		inputVariables.stringOfSubsequentMonth = "12";
+		return inputVariables;
 	}
 	else
 	{
-		std::ostringstream listOfMonthsAndYears;
-		listOfMonthsAndYears << yearBeingProcessed << "," << monthBeingProcessed << "," << yearBeingProcessed + 1 << ",01" << "," << yearBeingProcessed << ",11";
-		return listOfMonthsAndYears.str();
+		inputVariables.stringOfPreviousYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfYear = std::to_string(yearBeingProcessed);
+		inputVariables.stringOfSubsequentYear = std::to_string(yearBeingProcessed+1);
+		inputVariables.stringOfPreviousMonth = "11";
+		inputVariables.stringOfMonth = "12";
+		inputVariables.stringOfSubsequentMonth = "01";
+		return inputVariables;
 	}
 }
 
@@ -208,15 +233,8 @@ int main()
 
 		for (int j = assumedStartMonth; j < 13; j++)
 		{
-			std::cout << "\nProcessing " << getMonth(j) << " " << i;
 			assumedStartMonth = j;
-			std::string listOfMonthsAndYears = varList(i, j);
-			std::string stringOfPreviousYear = listOfMonthsAndYears.substr(16, 4);
-			std::string stringOfYear = listOfMonthsAndYears.substr(0, 4);
-			std::string stringOfSubsequentYear = listOfMonthsAndYears.substr(8, 4);
-			std::string stringOfPreviousMonth = listOfMonthsAndYears.substr(21, 2);
-			std::string stringOfMonth = listOfMonthsAndYears.substr(5, 2);
-			std::string stringOfSubsequentMonth = listOfMonthsAndYears.substr(13, 2);
+			inputVariables = varList(i, j);
 
 			// Process Data
 			
@@ -224,15 +242,13 @@ int main()
 			{
 				_sleep(1); // Required for Release
 			}
-			
-			Thread[eRequest]->inputFileStructureLocation = inputFileStructureLocation;
-			Thread[eRequest]->stringOfYear =stringOfYear;
-			Thread[eRequest]->stringOfMonth = stringOfMonth;
-			Thread[eRequest]->stringOfPreviousYear = stringOfPreviousYear;
-			Thread[eRequest]->stringOfPreviousMonth = stringOfPreviousMonth;
-			Thread[eRequest]->stringOfSubsequentYear = stringOfSubsequentYear;
-			Thread[eRequest]->stringOfSubsequentMonth = stringOfSubsequentMonth;
-			
+			Thread[eRequest]->processVariables.stringOfYear = inputVariables.stringOfYear;
+			Thread[eRequest]->processVariables.stringOfMonth = inputVariables.stringOfMonth;
+			Thread[eRequest]->processVariables.stringOfPreviousYear = inputVariables.stringOfPreviousYear;
+			Thread[eRequest]->processVariables.stringOfPreviousMonth = inputVariables.stringOfPreviousMonth;
+			Thread[eRequest]->processVariables.stringOfSubsequentYear = inputVariables.stringOfSubsequentYear;
+			Thread[eRequest]->processVariables.stringOfSubsequentMonth = inputVariables.stringOfSubsequentMonth;
+			std::cout << "\nInputting " << getMonth(j) << " " << i;
 			eRequest = -1;
 		}
 		assumedStartMonth = 1;

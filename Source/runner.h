@@ -34,21 +34,17 @@ public:
 		}
 
 		makeCopyFindTable();
-		makeNormalisedTitleTable(inputFileStructureLocation);
-		makeWordCountTable(inputFileStructureLocation, stringOfYear, stringOfMonth, stringOfSubsequentYear, stringOfSubsequentMonth, stringOfPreviousYear, stringOfPreviousMonth);
-		
-		std::cout << "\n\tProcessing Comparisons for " << stringOfMonth << " " << stringOfYear;
+		makeNormalisedTitleTable();
+		makeWordCountTable();
+
 		regexCopyfindTableTitles();
 		makeComparisonsTable();
 		crossReferenceValuesInWordCountAndCopyfindTables();
 
-		std::cout << "\n\t\tProcessing Unique Pages for " << stringOfMonth << " " << stringOfYear;
 		processDirectLinkComparisons();
-		assignMaximumAverageWordCountValues();
-		
-		std::cout << "\n\t\t\tWriting Files for " << stringOfMonth << " " << stringOfYear;
-		writeAllFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-		
+		assignMaximumAverageWordCountValues();	
+
+		writeAllFiles();
 		clearVectors();
 		if (!bRunComplete)
 		{

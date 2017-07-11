@@ -75,7 +75,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\Release\</OutDir>
-    <TargetName>$(ProjectName)_v_0_3_4</TargetName>
+    <TargetName>$(ProjectName)_v_0_3_5</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -83,7 +83,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\Release\</OutDir>
-    <TargetName>$(ProjectName)_v_0_3_4</TargetName>
+    <TargetName>$(ProjectName)_v_0_3_5</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="announcer.cpp" />
     <ClCompile Include="console.cpp" />
     <ClCompile Include="dateutil.cpp" />
     <ClCompile Include="inputter.h" />

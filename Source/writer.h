@@ -13,14 +13,14 @@ public:
 
 	// Writer
 
-	void writeComparisonTable(std::string inputlocation, std::string syear, std::string smonth)
+	void writeComparisonTable()
 	{
-		std::ofstream createfile(inputlocation + "\\outputs\\memes\\" + syear + "_" + smonth + ".tsv");
-		std::ofstream datafile(inputlocation + "\\outputs\\memes\\" + syear + "_" + smonth + ".tsv",std::ios::app); //print raw comparison table
+		std::ofstream createfile(inputFileStructureLocation + "\\outputs\\memes\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream datafile(inputFileStructureLocation + "\\outputs\\memes\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv",std::ios::app); //print raw comparison table
 
 		for (int i = 0; i < size(comparisonsTable); ++i)
 		{
-			if (comparisonsTable[i].earlierPage.normalisedNameOfPage.substr(5, 2) == smonth) // if earlier version is within the correct month
+			if (comparisonsTable[i].earlierPage.normalisedNameOfPage.substr(5, 2) == processVariables.stringOfMonth) // if earlier version is within the correct month
 			{
 				std::transform(comparisonsTable[i].laterPage.titleOfPage.begin(), comparisonsTable[i].laterPage.titleOfPage.end(), comparisonsTable[i].laterPage.titleOfPage.begin(), [](char ch) {return ch == '|' ? ' ' : ch; });
 				std::transform(comparisonsTable[i].earlierPage.titleOfPage.begin(), comparisonsTable[i].earlierPage.titleOfPage.end(), comparisonsTable[i].earlierPage.titleOfPage.begin(), [](char ch) {return ch == '|' ? ' ' : ch; });
@@ -33,19 +33,19 @@ public:
 		}
 		return;
 	}
-	void writeDirectedLinksFiles(std::string inputlocation, std::string syear, std::string smonth)
+	void writeDirectedLinksFiles()
 	{
 		std::regex t("([A-Za-z-,'&]+)_[A-Z0-9_]{4}");
 		std::regex p("[A-Za-z-,'&]+_([A-Z0-9_]{4})");
 
-		std::ofstream createdatafile_one(inputlocation + "\\outputs\\directedlinks\\" + syear + "_" + smonth + ".tsv"); //print ancestor-descendent pairs into file
-		std::ofstream createdatafile_two(inputlocation + "\\outputs\\evolutionarydeadends\\" + syear + "_" + smonth + ".tsv"); //print list of evolutionary dead-ends
-		std::ofstream datafile_one(inputlocation + "\\outputs\\directedlinks\\" + syear + "_" + smonth + ".tsv", std::ios::app);
-		std::ofstream datafile_two(inputlocation + "\\outputs\\evolutionarydeadends\\" + syear + "_" + smonth + ".tsv",std::ios::app); 
+		std::ofstream createdatafile_one(inputFileStructureLocation + "\\outputs\\directedlinks\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv"); //print ancestor-descendent pairs into file
+		std::ofstream createdatafile_two(inputFileStructureLocation + "\\outputs\\evolutionarydeadends\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv"); //print list of evolutionary dead-ends
+		std::ofstream datafile_one(inputFileStructureLocation + "\\outputs\\directedlinks\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv", std::ios::app);
+		std::ofstream datafile_two(inputFileStructureLocation + "\\outputs\\evolutionarydeadends\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv",std::ios::app);
 
 		for (int i = 0; i < size(uniquePagesTable); ++i)
 		{
-			if (!uniquePagesTable[i].bHasNoDescendents&&uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == smonth)
+			if (!uniquePagesTable[i].bHasNoDescendents&&uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == processVariables.stringOfMonth)
 			{
 				data_one = uniquePagesTable[i].nameOfLaterPage.substr(0, 4) + "\t" + uniquePagesTable[i].nameOfLaterPage.substr(5, 2) + "\t" + uniquePagesTable[i].nameOfLaterPage.substr(8, 2) + "\t";
 				data_one = data_one + std::regex_replace(uniquePagesTable[i].nameOfLaterPage.substr(11), t, "$1") + "\t" + std::regex_replace(uniquePagesTable[i].nameOfLaterPage.substr(11), p, "$1") + "\t";
@@ -56,7 +56,7 @@ public:
 		}
 		for (int i = 0; i < size(uniquePagesTable); ++i)
 		{
-			if (uniquePagesTable[i].bHasNoDescendents&&uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == smonth)
+			if (uniquePagesTable[i].bHasNoDescendents&&uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == processVariables.stringOfMonth)
 			{
 				data_two = uniquePagesTable[i].nameOfLaterPage.substr(0, 4) + "\t" + uniquePagesTable[i].nameOfLaterPage.substr(5, 2) + "\t" + uniquePagesTable[i].nameOfLaterPage.substr(8, 2) + "\t";
 				data_two = data_two + regex_replace(uniquePagesTable[i].nameOfLaterPage.substr(11, uniquePagesTable[i].nameOfLaterPage.length()), t, "$1") + "\t" + regex_replace(uniquePagesTable[i].nameOfLaterPage.substr(11, uniquePagesTable[i].nameOfLaterPage.length()), p, "$1") + "\n";
@@ -65,35 +65,35 @@ public:
 		}
 		return;
 	}
-	void writeMaxMatchList(std::string inputlocation, std::string syear, std::string smonth)
+	void writeMaxMatchList()
 	{
-		std::ofstream createfile(inputlocation + "\\outputs\\wordcounts\\" + syear + "_" + smonth + ".tsv");
-		std::ofstream datafile(inputlocation + "\\outputs\\wordcounts\\" + syear + "_" + smonth + ".tsv",std::ios::app);
+		std::ofstream createfile(inputFileStructureLocation + "\\outputs\\wordcounts\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream datafile(inputFileStructureLocation + "\\outputs\\wordcounts\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv",std::ios::app);
 
 		for (int m = 0; m < uniquePagesTable.size(); m++)
 		{
-			if (uniquePagesTable[m].nameOfLaterPage.substr(5, 2) == smonth)
+			if (uniquePagesTable[m].nameOfLaterPage.substr(5, 2) == processVariables.stringOfMonth)
 			{
-				if (uniquePagesTable[m].maximumAverageWordCountForReprintsOnLaterPage != 0)
-				{
+				//if (uniquePagesTable[m].maximumAverageWordCountForReprintsOnLaterPage != 0)
+				//{
 					data = uniquePagesTable[m].nameOfLaterPage + "\t" + std::to_string(int(uniquePagesTable[m].maximumAverageWordCountForReprintsOnLaterPage)) + "\n";
 					datafile << data;
-				}
+				//}
 			}
 		}
 
 	}
-	void writePagePercentageFiles(std::string inputlocation, std::string syear, std::string smonth)
+	void writePagePercentageFiles()
 	{
-		std::ofstream createfile_one(inputlocation + "\\outputs\\pagepercentage\\" + syear + "_" + smonth + ".tsv");
-		std::ofstream datafile_one(inputlocation + "\\outputs\\pagepercentage\\" + syear + "_" + smonth + ".tsv",std::ios::app);
-		std::ofstream createfile_two(inputlocation + "\\outputs\\pagepercentage\\error\\" + syear + "_" + smonth + ".tsv");
-		std::ofstream datafile_two(inputlocation + "\\outputs\\pagepercentage\\error\\" + syear + "_" + smonth + ".tsv",std::ios::app);
+		std::ofstream createfile_one(inputFileStructureLocation + "\\outputs\\pagepercentage\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream datafile_one(inputFileStructureLocation + "\\outputs\\pagepercentage\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv",std::ios::app);
+		std::ofstream createfile_two(inputFileStructureLocation + "\\outputs\\pagepercentage\\error\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream datafile_two(inputFileStructureLocation + "\\outputs\\pagepercentage\\error\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv",std::ios::app);
 
 
 		for (int i = 0; i < size(uniquePagesTable); ++i)
 		{
-			if (uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == smonth)
+			if (uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == processVariables.stringOfMonth)
 			{
 				if (uniquePagesTable[i].percentageOfReprintedMaterialOnPage >= 1 || uniquePagesTable[i].percentageOfReprintedMaterialOnPage <= 0)
 				{
@@ -111,17 +111,17 @@ public:
 			}
 		}
 	}
-	void writeIssuePercentageFiles(std::string inputlocation, std::string syear, std::string smonth)
+	void writeIssuePercentageFiles()
 	{
-		std::ofstream createfile_one(inputlocation + "\\outputs\\issuepercentage\\" + syear + "_" + smonth + ".tsv");
-		std::ofstream createfile_two(inputlocation + "\\outputs\\issuepercentage\\error\\" + syear + "_" + smonth + ".tsv");
-		std::ofstream datafile_one(inputlocation + "\\outputs\\issuepercentage\\" + syear + "_" + smonth + ".tsv",std::ios::app);
-		std::ofstream datafile_two(inputlocation + "\\outputs\\issuepercentage\\error\\" + syear + "_" + smonth + ".tsv", std::ios::app);
+		std::ofstream createfile_one(inputFileStructureLocation + "\\outputs\\issuepercentage\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream createfile_two(inputFileStructureLocation + "\\outputs\\issuepercentage\\error\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream datafile_one(inputFileStructureLocation + "\\outputs\\issuepercentage\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv",std::ios::app);
+		std::ofstream datafile_two(inputFileStructureLocation + "\\outputs\\issuepercentage\\error\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv", std::ios::app);
 
 
 		for (int i = 0; i < size(uniquePagesTable); ++i)
 		{
-			if (uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == smonth)
+			if (uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == processVariables.stringOfMonth)
 			{
 				if (i == 0)
 				{
@@ -187,22 +187,22 @@ public:
 			}
 		}
 	}
-	void writeTitlePagePercentageFiles(std::string inputlocation, std::string syear, std::string smonth)
+	void writeTitlePagePercentageFiles()
 	{
-		std::ifstream normalisationfile(inputlocation + "\\inputs\\NormalisedTitlesns.tsv");
+		std::ifstream normalisationfile(inputFileStructureLocation + "\\inputs\\NormalisedTitlesns.tsv");
 		std::string title = "";
 		std::string ntitle = "";
 
 		while (normalisationfile >> title >> ntitle)
 		{
-			std::ofstream createfile_one(inputlocation + "\\outputs\\titles\\pagepercentage\\" + ntitle + "\\" + syear + "_" + smonth + ".tsv");
-			std::ofstream datafile_one(inputlocation + "\\outputs\\titles\\pagepercentage\\" + ntitle + "\\" + syear + "_" + smonth + ".tsv");
-			std::ofstream createfile_two(inputlocation + "\\outputs\\titles\\pagepercentage\\error\\" + ntitle + "\\" + syear + "_" + smonth + ".tsv");
-			std::ofstream datafile_two(inputlocation + "\\outputs\\titles\\pagepercentage\\error\\" + ntitle + "\\" + syear + "_" + smonth + ".tsv");
+			std::ofstream createfile_one(inputFileStructureLocation + "\\outputs\\titles\\pagepercentage\\" + ntitle + "\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+			std::ofstream datafile_one(inputFileStructureLocation + "\\outputs\\titles\\pagepercentage\\" + ntitle + "\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+			std::ofstream createfile_two(inputFileStructureLocation + "\\outputs\\titles\\pagepercentage\\error\\" + ntitle + "\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+			std::ofstream datafile_two(inputFileStructureLocation + "\\outputs\\titles\\pagepercentage\\error\\" + ntitle + "\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
 
 			for (int i = 0; i < size(uniquePagesTable); ++i)
 			{
-				if (uniquePagesTable[i].nameOfEarlierPage != ""&&uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == smonth)
+				if (uniquePagesTable[i].nameOfEarlierPage != ""&&uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == processVariables.stringOfMonth)
 				{
 					if (uniquePagesTable[i].nameOfLaterPage.find(ntitle) != std::string::npos)
 					{
@@ -227,21 +227,21 @@ public:
 			}
 		}
 	}
-	void writeTitleIssuePercentageFiles(std::string inputlocation, std::string syear, std::string smonth)
+	void writeTitleIssuePercentageFiles()
 	{
-		std::ifstream normalisationfile(inputlocation + "\\inputs\\NormalisedTitlesns.tsv");
+		std::ifstream normalisationfile(inputFileStructureLocation + "\\inputs\\NormalisedTitlesns.tsv");
 		std::string title = "";
 		std::string ntitle = "";
 
 		while (normalisationfile >> title >> ntitle)
 		{
-			std::ofstream createfile_one(inputlocation + "\\outputs\\titles\\issuepercentage\\" + ntitle + "\\" + syear + "_" + smonth + ".tsv");
-			std::ofstream datafile_one(inputlocation + "\\outputs\\titles\\issuepercentage\\" + ntitle + "\\" + syear + "_" + smonth + ".tsv");
-			std::ofstream createfile_two(inputlocation + "\\outputs\\titles\\issuepercentage\\error\\" + ntitle + "\\" + syear + "_" + smonth + ".tsv");
-			std::ofstream datafile_two(inputlocation + "\\outputs\\titles\\issuepercentage\\error\\" + ntitle + "\\" + syear + "_" + smonth + ".tsv");
+			std::ofstream createfile_one(inputFileStructureLocation + "\\outputs\\titles\\issuepercentage\\" + ntitle + "\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+			std::ofstream datafile_one(inputFileStructureLocation + "\\outputs\\titles\\issuepercentage\\" + ntitle + "\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+			std::ofstream createfile_two(inputFileStructureLocation + "\\outputs\\titles\\issuepercentage\\error\\" + ntitle + "\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+			std::ofstream datafile_two(inputFileStructureLocation + "\\outputs\\titles\\issuepercentage\\error\\" + ntitle + "\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
 			for (int i = 0; i < size(uniquePagesTable); ++i)
 			{
-				if (uniquePagesTable[i].nameOfEarlierPage != ""&&uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == smonth)
+				if (uniquePagesTable[i].nameOfEarlierPage != ""&&uniquePagesTable[i].nameOfLaterPage.substr(5, 2) == processVariables.stringOfMonth)
 				{
 
 					if (uniquePagesTable[i].nameOfLaterPage.find(ntitle) != std::string::npos)
@@ -290,14 +290,14 @@ public:
 		}
 	}
 
-	void writeAllFiles(std::string inputlocation, std::string syear, std::string smonth)
+	void writeAllFiles()
 	{
-		writeComparisonTable(inputFileStructureLocation, stringOfYear, stringOfMonth);
-		writeDirectedLinksFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-		writeMaxMatchList(inputFileStructureLocation, stringOfYear, stringOfMonth);
-		writePagePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-		writeIssuePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-		writeTitlePagePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
-		writeTitleIssuePercentageFiles(inputFileStructureLocation, stringOfYear, stringOfMonth);
+		writeComparisonTable();
+		writeDirectedLinksFiles();
+		writeMaxMatchList();
+		writePagePercentageFiles();
+		writeIssuePercentageFiles();
+		writeTitlePagePercentageFiles();
+		writeTitleIssuePercentageFiles();
 	}
 };

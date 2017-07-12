@@ -1,5 +1,5 @@
 // Scissors and Paste Console
-// M. H. Beals (2017) v.0.3.5 [Software]
+// M. H. Beals (2017) v.0.3.6 [Software]
 
 // MIT License
 // Copyright(c) 2017 M. H. Beals

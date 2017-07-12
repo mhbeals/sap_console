@@ -88,9 +88,7 @@ public:
 
 	// Vectors
 	std::vector<comparisonEntry> comparisonsTable;
-
 	std::vector<uniquePageEntry> uniquePagesTable;
-
 	std::vector<copyfindEntry> copyfindTable;
 	std::vector<wordCountTableEntry> wordCountTable;
 	std::vector<normalisedTitleReference> normalisedTitlesTable;
@@ -370,8 +368,11 @@ public:
 
 		for (int i = 0; i < size(copyfindTable); i++) //while data is available
 		{
+			if (copyfindTable[i].monthOfLeftPage != stoi(processVariables.stringOfMonth)
+				&& 
+				copyfindTable[i].monthOfRightPage != stoi(processVariables.stringOfMonth)) {}
 			//do not include matches from same title
-			if (copyfindTable[i].titleOfLeftPage == copyfindTable[i].titleOfRightPage) {}
+			else if (copyfindTable[i].titleOfLeftPage == copyfindTable[i].titleOfRightPage) {}
 
 			//remove small matches
 			else if (copyfindTable[i].copyfindRighthandMatch <= rightMatchTolerance && copyfindTable[i].copyfindLefthandMatch <= leftMatchTolerance && copyfindTable[i].copyfindRighthandMatch + copyfindTable[i].copyfindLefthandMatch <= perfectMatchTolerance) {}

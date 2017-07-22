@@ -24,9 +24,9 @@
 #include "runner.h"
 
 // Starting Variables
-std::string inputFileStructureLocation = "g:\\sap_reprints";
+std::string inputFileStructureLocation = "E:\\Documents\\GitHub\\Data\\sap_reprints";
 int inputStartYear = 1800;
-int inputEndYear = 1900;
+int inputEndYear = 1800;
 int assumedStartMonth = 1;
 std::string promptContainer = "";
 int eRequest = -1;

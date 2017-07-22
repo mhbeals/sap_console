@@ -18,13 +18,7 @@
     <ClCompile Include="console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="inputter.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dateutil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="announcer.cpp">
+    <ClCompile Include="utilityFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -42,12 +36,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="writer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="processor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dateUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

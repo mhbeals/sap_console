@@ -35,21 +35,8 @@ public:
 		}
 
 		makeNormalisedTitleTable();
-
-		// Inputs
-		std::string inputs = inputFileStructureLocation + "\\inputs\\";
-		// Outputs
-		std::string outputs = inputFileStructureLocation + "\\outputs\\";
-		// Previous file
-		std::string previous = processVariables.stringOfPreviousYear + "_" + processVariables.stringOfPreviousMonth + ".tsv";
-		// Current file
-		std::string focus = processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv";
-		// Subsequent file
-		std::string subsequent = processVariables.stringOfSubsequentYear + "_" + processVariables.stringOfSubsequentMonth + ".tsv";
-
 		importWordCountData();
 		importCopyfindData();
-		regexUniquePageEntriesTitles();
 		calculateMaximumIssueWordCount();
 		writeOutputs();
 		clearVectors();

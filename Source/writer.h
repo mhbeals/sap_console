@@ -40,6 +40,28 @@ public:
 //   | |___| (_) | | |  __/  ____) | |_| |  | |_| | (__| |_\__ \
 //    \_____\___/|_|  \___| |_____/ \__|_|   \__,_|\___|\__|___/
 //                                                              
+	
+// Relative struct
+	struct relative
+	{
+		std::string year;
+		std::string month;
+		std::string day;
+		std::string title;
+		std::string normalisedTitle;
+		std::string hyphenatedTitle;
+		std::string page;
+	};
+
+	relative newRelative;
+
+	// Family struct
+	struct family
+	{
+		std::vector <relative> previous;
+		std::vector <relative> same;
+		std::vector <relative> subsequent;
+	};
 
 	// Page Struct (For Unique Page Entries Only; every instance shares this data)
 	struct pageEntry // Contains Unique Page Metadata
@@ -47,20 +69,23 @@ public:
 		std::string year; // Substr'd from inputPathOfLeftFile or inputPathOfRightFile
 		std::string month;  // Substr'd from inputPathOfLeftFile or inputPathOfRightFile
 		std::string day;  // Substr'd from inputPathOfLeftFile or inputPathOfRightFile
-		std::string title;  // Substr'd from inputPathOfLeftFile or inputPathOfRightFile
+		std::string title;  // Normalised from inputPathOfLeftFile or inputPathOfRightFile
+		std::string normalisedTitle;  // Normalised from inputPathOfLeftFile or inputPathOfRightFile and Regex
+		std::string hyphenatedTitle;  // Normalised from inputPathOfLeftFile or inputPathOfRightFile
 		std::string pageNumber;  // Substr'd from inputPathOfLeftFile or inputPathOfRightFile
 		int dateEnumeration; // A single number representing date in relation to 14 September 1752 (British move to Gregorian Calendar)
 		std::string uniquePageID; // The filename minus system path data
 		std::string uniqueIssueID; // The unique page ID minus the page number data
 		size_t issueIndex; // Cross reference to Unique Issue IDs vector
-		double maximumAverageWordCountofPage; // Computed by calculateMaximumIssueWordCount()
-		double maximumAverageWordCountofIssue; // Computed by calculateMaximumIssueWordCount()
 		int bestDirectLinkofPage{ -1 }; // Which earlier page has best perfect match / date score
 		bool bDirectedLinkMonth{ false }; // Is its best match in the right date range
 		double fullWordCountOfPage; // Pulled directly from WordCount Manifest
 		double fullWordCountOfIssue; // Pulled directly from WordCount Manifest
-		double percentageOfPage; // Computed by calculateMaximumIssueWordCount()
+		double percentageOfPage; // Computed by createMatchDataEntry()
+		double maximumAverageWordCountofPage; // Computed by createMatchDataEntry()
 		double percenageOfIssue; // Computed by calculateMaximumIssueWordCount()
+		double maximumAverageWordCountofIssue; // Computed by calculateMaximumIssueWordCount()
+		family familyOfPage;
 	};
 
 	// Unique Page ID Vector; a simple list of known page IDs
@@ -415,6 +440,59 @@ public:
 			uniquePageEntries[leftPageHolder].percentageOfPage = uniquePageEntries[leftPageHolder].maximumAverageWordCountofPage / uniquePageEntries[leftPageHolder].fullWordCountOfPage;
 		}
 
+		// Add descendent, same and subsequent links
+		// If they aren't the same date
+		if (uniquePageEntries[leftPageHolder].dateEnumeration - uniquePageEntries[rightPageHolder].dateEnumeration <= maxDaysBetweenPages)
+		{
+			if (uniquePageEntries[leftPageHolder].dateEnumeration != uniquePageEntries[rightPageHolder].dateEnumeration)
+			{
+				uniquePageEntries[leftPageHolder].familyOfPage.previous.push_back(newRelative);
+				size_t currentRelative = uniquePageEntries[leftPageHolder].familyOfPage.previous.size() - 1;
+				uniquePageEntries[leftPageHolder].familyOfPage.previous[currentRelative].year = uniquePageEntries[rightPageHolder].year;
+				uniquePageEntries[leftPageHolder].familyOfPage.previous[currentRelative].month = uniquePageEntries[rightPageHolder].month;
+				uniquePageEntries[leftPageHolder].familyOfPage.previous[currentRelative].day = uniquePageEntries[rightPageHolder].day;
+				uniquePageEntries[leftPageHolder].familyOfPage.previous[currentRelative].title = uniquePageEntries[rightPageHolder].title;
+				uniquePageEntries[leftPageHolder].familyOfPage.previous[currentRelative].normalisedTitle = uniquePageEntries[rightPageHolder].normalisedTitle;
+				uniquePageEntries[leftPageHolder].familyOfPage.previous[currentRelative].hyphenatedTitle = uniquePageEntries[rightPageHolder].hyphenatedTitle;
+				uniquePageEntries[leftPageHolder].familyOfPage.previous[currentRelative].page = uniquePageEntries[rightPageHolder].pageNumber;
+
+				uniquePageEntries[rightPageHolder].familyOfPage.subsequent.push_back(newRelative);
+				currentRelative = uniquePageEntries[rightPageHolder].familyOfPage.subsequent.size() - 1;
+
+				uniquePageEntries[rightPageHolder].familyOfPage.subsequent[currentRelative].year = uniquePageEntries[leftPageHolder].year;
+				uniquePageEntries[rightPageHolder].familyOfPage.subsequent[currentRelative].month = uniquePageEntries[leftPageHolder].month;
+				uniquePageEntries[rightPageHolder].familyOfPage.subsequent[currentRelative].day = uniquePageEntries[leftPageHolder].day;
+				uniquePageEntries[rightPageHolder].familyOfPage.subsequent[currentRelative].title = uniquePageEntries[leftPageHolder].title;
+				uniquePageEntries[rightPageHolder].familyOfPage.subsequent[currentRelative].normalisedTitle = uniquePageEntries[leftPageHolder].normalisedTitle;
+				uniquePageEntries[rightPageHolder].familyOfPage.subsequent[currentRelative].hyphenatedTitle = uniquePageEntries[leftPageHolder].hyphenatedTitle;
+				uniquePageEntries[rightPageHolder].familyOfPage.subsequent[currentRelative].page = uniquePageEntries[leftPageHolder].pageNumber;
+			}
+			// If they are the same date
+			else
+			{
+				uniquePageEntries[leftPageHolder].familyOfPage.same.push_back(newRelative);
+				size_t currentRelative = uniquePageEntries[leftPageHolder].familyOfPage.same.size() - 1;
+				uniquePageEntries[leftPageHolder].familyOfPage.same[currentRelative].year = uniquePageEntries[rightPageHolder].year;
+				uniquePageEntries[leftPageHolder].familyOfPage.same[currentRelative].month = uniquePageEntries[rightPageHolder].month;
+				uniquePageEntries[leftPageHolder].familyOfPage.same[currentRelative].day = uniquePageEntries[rightPageHolder].day;
+				uniquePageEntries[leftPageHolder].familyOfPage.same[currentRelative].title = uniquePageEntries[rightPageHolder].title;
+				uniquePageEntries[leftPageHolder].familyOfPage.same[currentRelative].normalisedTitle = uniquePageEntries[rightPageHolder].normalisedTitle;
+				uniquePageEntries[leftPageHolder].familyOfPage.same[currentRelative].hyphenatedTitle = uniquePageEntries[rightPageHolder].hyphenatedTitle;
+				uniquePageEntries[leftPageHolder].familyOfPage.same[currentRelative].page = uniquePageEntries[rightPageHolder].pageNumber;
+
+				uniquePageEntries[rightPageHolder].familyOfPage.same.push_back(newRelative);
+				currentRelative = uniquePageEntries[rightPageHolder].familyOfPage.same.size() - 1;
+
+				uniquePageEntries[rightPageHolder].familyOfPage.same[currentRelative].year = uniquePageEntries[leftPageHolder].year;
+				uniquePageEntries[rightPageHolder].familyOfPage.same[currentRelative].month = uniquePageEntries[leftPageHolder].month;
+				uniquePageEntries[rightPageHolder].familyOfPage.same[currentRelative].day = uniquePageEntries[leftPageHolder].day;
+				uniquePageEntries[rightPageHolder].familyOfPage.same[currentRelative].title = uniquePageEntries[leftPageHolder].title;
+				uniquePageEntries[rightPageHolder].familyOfPage.same[currentRelative].normalisedTitle = uniquePageEntries[leftPageHolder].normalisedTitle;
+				uniquePageEntries[rightPageHolder].familyOfPage.same[currentRelative].hyphenatedTitle = uniquePageEntries[leftPageHolder].hyphenatedTitle;
+				uniquePageEntries[rightPageHolder].familyOfPage.same[currentRelative].page = uniquePageEntries[leftPageHolder].pageNumber;
+			}
+		}
+
 //     _____            _   _             
 //    / ____|          | | (_)            
 //   | (___   ___  _ __| |_ _ _ __   __ _ 
@@ -520,6 +598,7 @@ public:
 		uniquePageEntries[current].month = holderPath.substr(28, 2);
 		uniquePageEntries[current].day = holderPath.substr(31, 2);
 		uniquePageEntries[current].title = holderPath.substr(34, holderPath.size() - 43);
+		regexUniquePageEntriesTitles(current);
 		uniquePageEntries[current].pageNumber = holderPath.substr(holderPath.size() - 8, 4);
 
 		// Push unique page ID to unique page id vector
@@ -636,6 +715,7 @@ public:
 		// Set input files	
 		std::ifstream dataForPreviousMonth(inputFileStructureLocation + "\\inputs\\" + "rawmatchingreports\\" + processVariables.stringOfPreviousYear + "_" + processVariables.stringOfPreviousMonth + ".tsv");
 		std::ifstream dataForCurrentMonth(inputFileStructureLocation + "\\inputs\\" + "rawmatchingreports\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ifstream dataForSubsequentMonth(inputFileStructureLocation + "\\inputs\\" + "rawmatchingreports\\" + processVariables.stringOfSubsequentYear + "_" + processVariables.stringOfSubsequentMonth + ".tsv");
 
 		while (dataForPreviousMonth >> inputDataPerfectMatch >> inputDataLeftMatch >> inputDataRightMatch >> inputDataPathOfLeftFile >> inputDataPathOfRightFile)
 		{
@@ -643,6 +723,11 @@ public:
 		}
 
 		while (dataForCurrentMonth >> inputDataPerfectMatch >> inputDataLeftMatch >> inputDataRightMatch >> inputDataPathOfLeftFile >> inputDataPathOfRightFile)
+		{
+			processCopyfindData();
+		}
+
+		while (dataForSubsequentMonth >> inputDataPerfectMatch >> inputDataLeftMatch >> inputDataRightMatch >> inputDataPathOfLeftFile >> inputDataPathOfRightFile)
 		{
 			processCopyfindData();
 		}
@@ -658,40 +743,48 @@ public:
 //               |___/           
 
 	struct normalisedTitleReference {
-		std::string title; // BL title
+		std::string title; // XML title
 		std::string normalisedTitle; // Normalised title
+		std::string underscoredTitle; // Underscore title
+		std::string hyphenatedTitle; // Hyphenated title
 	};
+
 
 	std::vector<normalisedTitleReference> normalisedTitlesTable;
 
 	void makeNormalisedTitleTable()
 	{
-		std::ifstream data(inputFileStructureLocation + "\\inputs\\" + "NormalisedTitlesns.tsv");
+		std::ifstream data(inputFileStructureLocation + "\\inputs\\" + "NormalisedTitles.tsv");
 		std::string title = "";
 		std::string normalisedTitle = "";
+		std::string underscoredTitle = ""; 
+		std::string hyphenatedTitle = "";
 		normalisedTitleReference empty;
 		int i = -1;
 
-		while (data >> title >> normalisedTitle)
+		while (data >> title >> normalisedTitle >> underscoredTitle >> hyphenatedTitle)
 		{
 			i += 1;
 			normalisedTitlesTable.push_back(empty);
 			normalisedTitlesTable[i].title = title;
 			normalisedTitlesTable[i].normalisedTitle = normalisedTitle;
+			normalisedTitlesTable[i].underscoredTitle = underscoredTitle;
+			normalisedTitlesTable[i].hyphenatedTitle = hyphenatedTitle;
 		}
 	}
 
 	// Normalise Titles
-	void regexUniquePageEntriesTitles()
+	void regexUniquePageEntriesTitles(size_t current)
 	{
-		for (size_t i = 0; i < uniquePageEntries.size(); i++)
+		std::regex e("_");
+		for (size_t j = 0; j < size(normalisedTitlesTable); j++)
 		{
-			for (size_t j = 0; j < size(normalisedTitlesTable); j++)
+			if (uniquePageEntries[current].title == normalisedTitlesTable[j].title)
 			{
-				if (uniquePageEntries[i].title == normalisedTitlesTable[j].title)
-				{
-					uniquePageEntries[i].title = normalisedTitlesTable[j].normalisedTitle;
-				}
+				uniquePageEntries[current].title = normalisedTitlesTable[j].normalisedTitle;
+				uniquePageEntries[current].normalisedTitle = regex_replace(normalisedTitlesTable[j].underscoredTitle,e," ");
+				uniquePageEntries[current].hyphenatedTitle = normalisedTitlesTable[j].hyphenatedTitle;
+				break;
 			}
 		}
 	}
@@ -710,7 +803,7 @@ public:
 		std::sort(matchDataEntries.begin(), matchDataEntries.end(), &CompareRecords);
 
 		// Meme List
-		std::ofstream memeData(inputFileStructureLocation + "\\outputs\\" + "memes\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream memeData(inputFileStructureLocation + "\\outputs\\memes\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
 		std::string dataStream;
 
 		for (size_t i = 0; i < matchDataEntries.size(); i++)
@@ -737,11 +830,11 @@ public:
 		}
 
 		// Directed Links, Evolutionary Dead Ends and Average Word Count per Page
-		std::ofstream directedLinkData(inputFileStructureLocation + "\\outputs\\" + "directedLinks\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream directedLinkData(inputFileStructureLocation + "\\outputs\\directedLinks\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
 		std::string directedLinkStream = "";
-		std::ofstream evolutionaryDeadEndData(inputFileStructureLocation + "\\outputs\\" + "evolutionarydeadends\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream evolutionaryDeadEndData(inputFileStructureLocation + "\\outputs\\evolutionarydeadends\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
 		std::string evolutionaryDeadEndStream = "";
-		std::ofstream wordCountDataOfPage(inputFileStructureLocation + "\\outputs\\" + "wordcount_page\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream wordCountDataOfPage(inputFileStructureLocation + "\\outputs\\wordcount_page\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
 		std::string wordCountOfPageStream = "";
 
 		for (size_t j = 0; j < uniquePageEntries.size(); j++)
@@ -802,7 +895,7 @@ public:
 		wordCountDataOfPage << wordCountOfPageStream;
 
 		// Maximum Average Word Counts (and Percentages) per issue
-		std::ofstream wordCountDataOfIssue(inputFileStructureLocation + "\\outputs\\" + "wordcount_issue\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
+		std::ofstream wordCountDataOfIssue(inputFileStructureLocation + "\\outputs\\wordcount_issue\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".tsv");
 		std::string wordCountOfIssueStream = "";
 
 		for (size_t k = 0; k < averageWordCountofIssueList.size(); k++)
@@ -829,6 +922,136 @@ public:
 		// Page Percentages By Title
 
 		// Issue Percentages By Title
+
+		// XML data
+		std::ofstream XMLfile(inputFileStructureLocation + "\\outputs\\XMLs\\" + processVariables.stringOfYear + "_" + processVariables.stringOfMonth + ".xml");
+		
+		// Start the year file
+		std::string XMLData = "<year>\n";
+
+		std::string pageS = "S00";
+
+		for (int i = 0; i < size(uniquePageEntries); ++i)
+		{
+			if (uniquePageEntries[i].pageNumber.find(pageS) == std::string::npos && uniquePageEntries[i].month == processVariables.stringOfMonth && uniquePageEntries[i].year == processVariables.stringOfYear && (uniquePageEntries[i].familyOfPage.previous.size() != 0 || uniquePageEntries[i].familyOfPage.same.size() != 0 || uniquePageEntries[i].familyOfPage.subsequent.size() != 0)
+				)
+			{
+				XMLData = XMLData + "<page>\n\t<year>";
+				XMLData = XMLData + uniquePageEntries[i].year
+					+ "</year>\n\t<month>";
+				XMLData = XMLData + getMonth(std::stoi(uniquePageEntries[i].month))
+					+ "</month>\n\t<monthno>";
+				XMLData = XMLData + uniquePageEntries[i].month
+					+ "</monthno>\n\t<day>";
+				XMLData = XMLData + std::to_string(std::stoi(uniquePageEntries[i].day))
+					+ "</day>\n\t<dayno>";
+				XMLData = XMLData + uniquePageEntries[i].day
+					+ "</dayno>\n\t<title>";
+				XMLData = XMLData + uniquePageEntries[i].title
+					+ "</title>\n\t<titlenormal>";
+				XMLData = XMLData + uniquePageEntries[i].normalisedTitle
+					+ "</titlenormal>\n\t<titledash>";
+				XMLData = XMLData + uniquePageEntries[i].hyphenatedTitle
+					+ "</titledash>\n\t<pageno>";
+				XMLData = XMLData + std::to_string(std::stoi(uniquePageEntries[i].pageNumber))
+					+ "</pageno>";
+				XMLfile << XMLData;
+				XMLData = "";
+
+				for (int b = 0; b < uniquePageEntries[i].familyOfPage.previous.size(); b++)
+				{
+					if (uniquePageEntries[i].familyOfPage.previous[b].page.find(pageS) != std::string::npos)
+					{
+						_sleep(1);
+					}
+					else
+					{
+						XMLData = XMLData
+							+ "\n\t<previous>\n\t\t<year>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.previous[b].year
+							+ "</year>\n\t\t<month>";
+						XMLData = XMLData + getMonth(std::stoi(uniquePageEntries[i].familyOfPage.previous[b].month))
+							+ "</month>\n\t\t<day>";
+						XMLData = XMLData + std::to_string(std::stoi(uniquePageEntries[i].familyOfPage.previous[b].day))
+							+ "</day>\n\t\t<title>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.previous[b].title
+							+ "</title>\n\t\t<titlenormal>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.previous[b].normalisedTitle
+							+ "</titlenormal>\n\t\t<titledash>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.previous[b].hyphenatedTitle
+							+ "</titledash>\n\t\t<pageno>";
+						XMLData = XMLData + std::to_string(std::stoi(uniquePageEntries[i].familyOfPage.previous[b].page))
+							+ "</pageno>\n\t</previous>";
+						XMLfile << XMLData;
+						XMLData = "";
+					}
+				}
+				for (int b = 0; b < uniquePageEntries[i].familyOfPage.same.size(); b++)
+				{
+					if (uniquePageEntries[i].familyOfPage.same[b].page.find(pageS) != std::string::npos)
+					{
+						_sleep(1);
+					}
+					else
+					{
+						XMLData = XMLData
+							+ "\n\t<same>\n\t\t<year>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.same[b].year
+							+ "</year>\n\t\t<month>";
+						XMLData = XMLData + getMonth(std::stoi(uniquePageEntries[i].familyOfPage.same[b].month))
+							+ "</month>\n\t\t<day>";
+						XMLData = XMLData + std::to_string(std::stoi(uniquePageEntries[i].familyOfPage.same[b].day))
+							+ "</day>\n\t\t<title>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.same[b].title
+							+ "</title>\n\t\t<titlenormal>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.same[b].normalisedTitle
+							+ "</titlenormal>\n\t\t<titledash>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.same[b].hyphenatedTitle
+							+ "</titledash>\n\t\t<pageno>";
+						XMLData = XMLData + std::to_string(std::stoi(uniquePageEntries[i].familyOfPage.same[b].page))
+							+ "</pageno>\n\t</same>";
+						XMLfile << XMLData;
+						XMLData = "";
+					}
+				}
+				for (int b = 0; b < uniquePageEntries[i].familyOfPage.subsequent.size(); b++)
+				{
+					if (uniquePageEntries[i].familyOfPage.subsequent[b].page.find(pageS) != std::string::npos)
+					{
+						_sleep(1);
+					}
+					else
+					{
+						XMLData = XMLData
+							+ "\n\t<subsequent>\n\t\t<year>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.subsequent[b].year
+							+ "</year>\n\t\t<month>";
+						XMLData = XMLData + getMonth(std::stoi(uniquePageEntries[i].familyOfPage.subsequent[b].month))
+							+ "</month>\n\t\t<day>";
+						XMLData = XMLData + std::to_string(std::stoi(uniquePageEntries[i].familyOfPage.subsequent[b].day))
+							+ "</day>\n\t\t<title>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.subsequent[b].title
+							+ "</title>\n\t\t<titlenormal>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.subsequent[b].normalisedTitle
+							+ "</titlenormal>\n\t\t<titledash>";
+						XMLData = XMLData + uniquePageEntries[i].familyOfPage.subsequent[b].hyphenatedTitle
+							+ "</titledash>\n\t\t<pageno>";
+						XMLData = XMLData + std::to_string(std::stoi(uniquePageEntries[i].familyOfPage.subsequent[b].page))
+							+ "</pageno>\n\t</subsequent>";
+						XMLfile << XMLData;
+						XMLData = "";
+					}
+				}
+				XMLData = "\n</page>\n";
+				XMLfile << XMLData;
+				XMLData = "";
+			}
+		}
+
+		// End the XML file
+		XMLData = "</year>";
+		XMLfile << XMLData;
+		XMLData = "";
 
 	}
 

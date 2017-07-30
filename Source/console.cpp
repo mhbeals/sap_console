@@ -1,5 +1,5 @@
 // Scissors and Paste Console
-// M. H. Beals (2017) v.0.3.6 [Software]
+// M. H. Beals (2017) v.0.4.2 [Software]
 
 // MIT License
 // Copyright(c) 2017 M. H. Beals
@@ -24,9 +24,9 @@
 #include "runner.h"
 
 // Starting Variables
-std::string inputFileStructureLocation = "E:\\Documents\\GitHub\\Data\\sap_reprints";
+std::string inputFileStructureLocation = "C:\\Users\\cliod\\Documents\\Github\\sap_reprints";
 int inputStartYear = 1800;
-int inputEndYear = 1800;
+int inputEndYear = 1872;
 int assumedStartMonth = 1;
 std::string promptContainer = "";
 int eRequest = -1;
@@ -248,7 +248,7 @@ int main()
 			Thread[eRequest]->processVariables.stringOfPreviousMonth = inputVariables.stringOfPreviousMonth;
 			Thread[eRequest]->processVariables.stringOfSubsequentYear = inputVariables.stringOfSubsequentYear;
 			Thread[eRequest]->processVariables.stringOfSubsequentMonth = inputVariables.stringOfSubsequentMonth;
-			std::cout << "\nInputting " << getMonth(j) << " " << i;
+			std::cout << "\nProcessing " << getMonth(j) << " " << i;
 			eRequest = -1;
 		}
 		assumedStartMonth = 1;
